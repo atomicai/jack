@@ -26,6 +26,9 @@ format-fix:
 	black ${BLACK_FLAGS} ${NAME} test
 	autoflake ${FLAKE_FLAGS} ${NAME} test
 
+start:
+	bash run.sh
+
 test:
 	pytest test ${PYTEST_FLAGS} --testmon --suppress-no-test-exit-code
 
