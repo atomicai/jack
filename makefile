@@ -6,6 +6,7 @@ FLAKE_FLAGS=--remove-unused-variables --ignore-init-module-imports --recursive
 # "" is for multi-lang strings (comments, logs), '' is for everything else.
 BLACK_FLAGS=--skip-string-normalization --line-length=${LINE_WIDTH}
 PYTEST_FLAGS=-p no:warnings
+export FLASK_APP= jack.tdk.rise
 
 install:
 	pip install -e '.[all]'
@@ -28,6 +29,9 @@ format-fix:
 
 start:
 	bash run.sh
+
+run:
+	flask run
 
 test:
 	pytest test ${PYTEST_FLAGS} --testmon --suppress-no-test-exit-code
