@@ -33,7 +33,7 @@ UI is available @ `127.0.0.0:5000`
 <details>
 <summary>Querying</summary>
 
-Given a question $\vec{q}$ you get your $top_k$ documents $d_1, \cdots, d_{top-k}$ that are the most similar to the query $\vec{q}$. How "similar" is defined solely by the encoder you have chosen @ previous step (`indexing`).
+> Given a question $\vec{q}$ you get your $top_k$ documents $d_1, \cdots, d_{top-k}$ that are the most similar to the query $\vec{q}$. How "similar" is defined solely by the encoder you have chosen @ previous step (`indexing`).
 
 | Engine  | Description  | Notebook |
 |:----------|:-------------|:-------------|
