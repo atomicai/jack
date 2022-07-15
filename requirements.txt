@@ -3,7 +3,7 @@ wandb
 isort==5.10.1
 black==22.3.0
 tqdm==4.64.0
-pandas==1.4.2
+pandas
 seqeval
 icecream==2.1.2
 transformers==4.18.0
@@ -11,3 +11,6 @@ simplejson==3.17.6
 mmh3==3.0.0
 Flask==2.0.1
 icecream
+more-itertools
+python-dotenv
+elasticsearch==7.16.1
