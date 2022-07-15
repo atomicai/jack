@@ -2,7 +2,7 @@
 
 > Given a set of pre-labeled textual documents $d_1, d_2, \cdots, d_n$ where for every $d_i$ there is a topic $t_j$. The number of topics is usually much lower than the number of documents $k << n$. 
 
-> Given a new incoming document $d_{n+1}$ you want to either assign it to a pre-existing topic, namely, one of $\{t_j\}_{j=1}^{k}$ or assign a new topic (aka cluster) $t_{k+1}$. 
+> Given a new incoming document $d_{n+1}$ you want to either assign it to a pre-existing topic, namely, one of ${t_j}_{j=1}^{k}$ or assign a new topic (aka cluster) $t_{k+1}$. 
 
 ---
 ### Installation
