@@ -1,4 +1,12 @@
+import logging
+import subprocess
+import time
+
 import numpy as np
+
+logger = logging.getLogger(__name__)
+
+ES_CONTAINER_NAME = "elastic_7.16.1"
 
 
 def elastic_query_api(
@@ -34,3 +42,25 @@ def elastic_query_api(
 
 def sql_query_api():
     raise NotImplementedError()
+
+
+def _on_es_start(sleep=15, delete_existing=False):
+    # Start an Elasticsearch server via Docker
+
+    logger.debug("Starting Elasticsearch ...")
+    if delete_existing:
+        _ = subprocess.run([f"docker rm --force {ES_CONTAINER_NAME}"], shell=True, stdout=subprocess.DEVNULL)
+    status = subprocess.run(
+        [
+            f'docker start {ES_CONTAINER_NAME} > /dev/null 2>&1 || docker run -d -p 9200:9200 -e "discovery.type=single-node" --name {ES_CONTAINER_NAME} elasticsearch:7.16.1'
+        ],
+        shell=True,
+    )
+    if status.returncode:
+        logger.warning(
+            "Tried to start Elasticsearch through Docker but this failed. "
+            "It is likely that there is already an existing Elasticsearch instance running. "
+        )
+    else:
+        time.sleep(sleep)
+    return status

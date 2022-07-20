@@ -133,10 +133,12 @@ def load(
     db_filename = filename
     db_filepath = data_dir / (db_filename + ext)
 
-    if ext in (".csv", ".tsv"):
+    if ext in (".csv", ".tsv", ".xlsx"):
         columns_needed = list(rename_columns.keys()) if rename_columns else None
-
-        df = pd.read_csv(db_filepath, encoding=encoding, skipinitialspace=True, sep=sep, usecols=columns_needed, **kwargs)
+        if ext == ".xlsx":
+            df = pd.read_excel(db_filepath)
+        else:
+            df = pd.read_csv(db_filepath, encoding=encoding, skipinitialspace=True, sep=sep, usecols=columns_needed, **kwargs)
         df = df.rename(columns=rename_columns) if rename_columns else df
         if as_record:
             yield df.to_dict(orient="records")
@@ -151,7 +153,7 @@ def load(
             docs = json.load(j_ptr)
 
     if lazy:
-        raise StopIteration
+        raise StopIteration()
 
     if parse_meta:
         for d in docs:
