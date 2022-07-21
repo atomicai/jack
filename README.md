@@ -8,7 +8,10 @@
 ---
 ### Installation
 
-> Before running commands below make sure you have docker up and running.
+> Before running commands below make sure <u>you have docker</u> up and running.
+
+> On Windows make sure <u>you have "make"</u> on your PATH variable (install it first using e.g. <a href="https://chocolatey.org">choco</a> package manager via `choco install make`)
+
 1.  `make install` (installing the necessary python libs)
 2. `make start` (start the docker along with the container mapping named volume)
 3. `make run` (fire up the ui and service)
@@ -25,7 +28,7 @@ UI is available @ `127.0.0.0:5000`
 
 | Encoder  | Description  | Notebook |
 |:----------|:-------------|:-------------|
-| [bm25](https://en.wikipedia.org/wiki/Okapi_BM25) | Under the hood perform the "inverse mapping" for every document. The mapping from each word to a set of documents where specific word $w$ occur.  | TODO |
+| [bm25](https://en.wikipedia.org/wiki/Okapi_BM25) | Under the hood perform the "inverse mapping" for every document. The mapping from each word to a set of documents where specific word $w$ occur.  | [indexing.ipynb](./notebook/indexing.ipynb) |
 | [BERT](https://arxiv.org/abs/2004.04906) | Dense semantic encoder. Encode text using pretrained neural network mapping to $\Re^N$. (NOT IMPLEMENTED) | TODO |
 
 
@@ -37,7 +40,7 @@ UI is available @ `127.0.0.0:5000`
 
 | Engine  | Description  | Notebook |
 |:----------|:-------------|:-------------|
-| [bm25](https://en.wikipedia.org/wiki/Okapi_BM25) | query the indexed documents | TODO |
+| [bm25](https://en.wikipedia.org/wiki/Okapi_BM25) | query the indexed documents | [querying.ipynb](./notebook/querying.ipynb) |
 | [Dense]() | Dense semantic encoder. Encode text using pretrained neural network mapping to $\Re^N$. (NOT IMPLEMENTED) | TODO |
 
 </details>
@@ -50,8 +53,8 @@ UI is available @ `127.0.0.0:5000`
 
 | Ranking  | Description  | Notebook |
 |:----------|:-------------|:-------------|
-| [weak](https://en.wikipedia.org/wiki/Okapi_BM25) | Encode text based on word distribution across all documents | TODO |
-| [strict](https://github.com/neuml/tldrstory) | This is (NOT IMPLEMENTED) yet| TODO |
+| [weak](https://github.com/atomicai/jack/ranking/weak/ranker.py) | Simply pick the label with highest distribution across all relevant docs | [ranking.ipynb](./notebook/ranking.ipynb) |
+| [strict](https://github.com/atomicai/jack/ranking/strict/ranker.py) | This is (NOT IMPLEMENTED) yet | TODO |
 
 </details>
 
@@ -61,4 +64,3 @@ UI is available @ `127.0.0.0:5000`
 
 > The natural question arises: given the two different encoders (`indexing` step) and rankers (`ranking` step) which one is the best?
 
-NOT IMPLEMENTED

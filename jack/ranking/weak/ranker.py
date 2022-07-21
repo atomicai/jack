@@ -27,4 +27,4 @@ class WeakRanker(ranker.BaseRanker):
             if v > _ans:
                 _ans = v
                 ans = k
-        return (ans, _ans) if _ans > 1.5 else ("Новый", _ans)
+        return (ans, _ans) if _ans > 1.5 else (None, _ans)
