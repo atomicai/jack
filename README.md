@@ -62,5 +62,5 @@ UI is available @ `127.0.0.0:5000`
 
 ### Evaluation
 
-> The natural question arises: given the two different encoders (`indexing` step) and rankers (`ranking` step) which one is the best?
+> The natural question arises: given the two different encoders (`indexing` step) and rankers (`ranking` step) which one is the best? The short answer is, it depends on circumstances. The simple evaluation is presented as [evaluating.ipynb](./notebook/evaluating.ipynb) which simlpy <u>picks the highest "recall"</u> while <u>not permitting</u> precision to reach zero on any class.
 
