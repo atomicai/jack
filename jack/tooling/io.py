@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import random_name
 import simplejson
+from jack.tooling import pic, remote
 from transformers import (
     AlbertTokenizer,
     AlbertTokenizerFast,
@@ -31,8 +32,6 @@ from transformers import (
     XLNetTokenizer,
     XLNetTokenizerFast,
 )
-
-from jack.tooling import pic, remote
 
 logger = logging.getLogger(__name__)
 
@@ -136,9 +135,9 @@ def load(
     if ext in (".csv", ".tsv", ".xlsx"):
         columns_needed = list(rename_columns.keys()) if rename_columns else None
         if ext == ".xlsx":
-            df = pd.read_excel(db_filepath)
+            df = pd.read_excel(db_filepath, usecols=columns_needed, engine="openpyxl", **kwargs)
         else:
-            df = pd.read_csv(db_filepath, encoding=encoding, skipinitialspace=True, sep=sep, usecols=columns_needed, **kwargs)
+            df = pd.read_csv(db_filepath, encoding=encoding, skipinitialspace=True, sep=sep, **kwargs)
         df = df.rename(columns=rename_columns) if rename_columns else df
         if as_record:
             yield df.to_dict(orient="records")
@@ -148,9 +147,9 @@ def load(
     with open(str(db_filepath), "r", encoding=encoding) as j_ptr:
         if lazy:
             for jline in j_ptr:
-                yield json.loads(jline)
+                yield simplejson.loads(jline)
         else:
-            docs = json.load(j_ptr)
+            docs = simplejson.load(j_ptr)
 
     if lazy:
         raise StopIteration()

@@ -1,4 +1,5 @@
 import copy
+import datetime
 import hashlib
 import itertools
 import json
@@ -7,10 +8,11 @@ import os
 import pathlib
 import random
 from itertools import islice
-from typing import Iterable
+from typing import Iterable, List, Optional, Tuple
 
 import numpy as np
 import simplejson
+import torch
 
 logger = logging.getLogger(__name__)
 
@@ -102,27 +104,68 @@ def flatten_list(nested_list):
             yield sublist
 
 
-def initialize_device_settings(use_cuda, use_ips: bool = False, local_rank=-1, use_amp=None):
-    if not use_cuda:
-        device = torch.device("cpu")
+def initialize_device_settings(
+    use_cuda: Optional[bool] = None,
+    local_rank: int = -1,
+    multi_gpu: bool = True,
+    devices: Optional[List[torch.device]] = None,
+) -> Tuple[List[torch.device], int]:
+    """
+    Returns a list of available devices.
+
+    :param use_cuda: Whether to make use of CUDA GPUs (if available).
+    :param local_rank: Ordinal of device to be used. If -1 and `multi_gpu` is True, all devices will be used.
+                       Unused if `devices` is set or `use_cuda` is False.
+    :param multi_gpu: Whether to make use of all GPUs (if available).
+                      Unused if `devices` is set or `use_cuda` is False.
+    :param devices: an explicit list of which GPUs to use. Unused if `use_cuda` is False.
+    """
+    if use_cuda is False:  # Note that it could be None, in which case we also want to just skip this step.
+        devices_to_use = [torch.device("cpu")]
         n_gpu = 0
+    elif devices:
+        devices_to_use = devices
+        n_gpu = sum(1 for device in devices if "cpu" not in device.type)
     elif local_rank == -1:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        if not torch.cuda.is_available():
-            n_gpu = 0
+        if torch.cuda.is_available():
+            if multi_gpu:
+                devices_to_use = [torch.device(device) for device in range(torch.cuda.device_count())]
+                n_gpu = torch.cuda.device_count()
+            else:
+                devices_to_use = [torch.device("cuda")]
+                n_gpu = 1
         else:
-            n_gpu = torch.cuda.device_count()
+            devices_to_use = [torch.device("cpu")]
+            n_gpu = 0
     else:
-        device = torch.device("cuda", local_rank)
-        torch.cuda.set_device(device)
+        devices_to_use = [torch.device("cuda", local_rank)]
+        torch.cuda.set_device(devices_to_use[0])
         n_gpu = 1
         # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
         torch.distributed.init_process_group(backend="nccl")
-    logger.info(f"Using device: {str(device).upper()} ")
+    logger.info(f"Using devices: {', '.join([str(device) for device in devices_to_use]).upper()}")
     logger.info(f"Number of GPUs: {n_gpu}")
-    logger.info(f"Distributed Training: {bool(local_rank != -1)}")
-    logger.info(f"Automatic Mixed Precision: {use_amp}")
-    return device, n_gpu
+    return devices_to_use, n_gpu
+
+
+def convert_date_to_rfc3339(date: str) -> str:
+    """
+    Converts a date to RFC3339 format, as Weaviate requires dates to be in RFC3339 format including the time and
+    timezone.
+
+    If the provided date string does not contain a time and/or timezone, we use 00:00 as default time
+    and UTC as default time zone.
+
+    This method cannot be part of WeaviateDocumentStore, as this would result in a circular import between weaviate.py
+    and filter_utils.py.
+    """
+    parsed_datetime = datetime.fromisoformat(date)
+    if parsed_datetime.utcoffset() is None:
+        converted_date = parsed_datetime.isoformat() + "Z"
+    else:
+        converted_date = parsed_datetime.isoformat()
+
+    return converted_date
 
 
 def get_dict_checksum(payload_dict):
