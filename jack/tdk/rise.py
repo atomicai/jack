@@ -5,9 +5,8 @@ import pathlib
 
 import dotenv
 from flask import Flask, request, send_from_directory
-
 from jack.engine import bm25
-from jack.storing import elastic
+from jack.storing.module import memo
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(name)s -   %(message)s",
@@ -19,7 +18,7 @@ dotenv.load_dotenv()
 
 top_k = int(os.environ.get("TOP_K", 5))
 index = os.environ.get("INDEX", "document")
-store = elastic.ElasticDocStore(index=index)
+store = memo.MemoDocStore(index=index)
 engine = bm25.BM25Retriever(store, top_k=top_k)
 
 app = Flask(

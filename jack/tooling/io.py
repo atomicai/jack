@@ -36,6 +36,24 @@ from transformers import (
 logger = logging.getLogger(__name__)
 
 
+def log_ascii_workers(n, _logger):
+    m_worker_lines = pic.WORKER_M.split("\n")
+    f_worker_lines = pic.WORKER_F.split("\n")
+    x_worker_lines = pic.WORKER_X.split("\n")
+    all_worker_lines = []
+    for i in range(n):
+        rand = np.random.randint(low=0, high=3)
+        if rand % 3 == 0:
+            all_worker_lines.append(f_worker_lines)
+        elif rand % 3 == 1:
+            all_worker_lines.append(m_worker_lines)
+        else:
+            all_worker_lines.append(x_worker_lines)
+    zipped = zip(*all_worker_lines)
+    for z in zipped:
+        _logger.info("  ".join(z))
+
+
 def load_tokenizer(pretrained_model_name_or_path, revision=None, tokenizer_class=None, use_fast=True, **kwargs):
     """
     Enables loading of different Tokenizer classes with a uniform interface. Either infer the class from

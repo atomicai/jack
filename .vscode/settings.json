@@ -1,0 +1,75 @@
+{
+    "python.defaultInterpreterPath": "/home/justatom/jarvis/bin/python",
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+        "--max-line-length=129",
+        "--ignore=E402,E123,E125,PAI202,PAI201,PAI100,PAI203",
+    ],
+    "editor.formatOnType": true,
+    "editor.formatOnSave": true,
+    "python.formatting.blackArgs": [
+        "--line-length",
+        "129",
+        "--skip-string-normalization",
+        "--check",
+        "--diff"
+    ],
+    "debug.console.fontSize": 15,
+    "debug.console.fontFamily": "Roboto Mono for Powerline",
+    "terminal.integrated.fontFamily": "monospace",
+    "terminal.integrated.fontSize": 15,
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}"
+    ],
+    "python.analysis.disabled": [
+        "unresolved-import"
+    ],
+    "python.linting.pylintArgs": [
+        "--load-plugin",
+        "pylint_protobuf"
+    ],
+    "python.languageServer": "Jedi",
+    "files.exclude": {
+        "**/*.pyc": {
+            "when": "$(basename).py"
+        },
+        "**/__pycache__": true,
+    },
+    "jupyter.alwaysTrustNotebooks": true,
+    "jupyter.jupyterServerType": "local",
+    "jupyter.notebookFileRoot": "${workspaceFolder}",
+    "workbench.settings.useSplitJSON": true,
+    "workbench.settings.openDefaultSettings": true,
+    "editor.fontSize": 16,
+    "editor.fontFamily": "Lucida Sans Unicode",
+    "editor.tokenColorCustomizations": {
+        "[One Dark Pro]": {
+            "textMateRules": [
+                {
+                    "scope": [
+                        "source.python"
+                    ],
+                    "settings": {
+                        "fontStyle": "italic"
+                    }
+                }
+            ]
+        },
+        "[Noctis]": {
+            "textMateRules": [
+                {
+                    "scope": [
+                        "source.python"
+                    ],
+                    "settings": {
+                        "fontStyle": "italic"
+                    }
+                }
+            ]
+        }
+    },
+    "python.formatting.provider": "black"
+}

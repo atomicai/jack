@@ -13,6 +13,8 @@ from typing import Iterable, List, Optional, Tuple
 import numpy as np
 import simplejson
 import torch
+import torch.multiprocessing as mp
+from jack.tooling import pic
 
 logger = logging.getLogger(__name__)
 
@@ -176,6 +178,24 @@ def get_dict_checksum(payload_dict):
     return checksum
 
 
+def log_ascii_workers(n, logger):
+    m_worker_lines = pic.WORKER_M.split("\n")
+    f_worker_lines = pic.WORKER_F.split("\n")
+    x_worker_lines = pic.WORKER_X.split("\n")
+    all_worker_lines = []
+    for i in range(n):
+        rand = np.random.randint(low=0, high=3)
+        if rand % 3 == 0:
+            all_worker_lines.append(f_worker_lines)
+        elif rand % 3 == 1:
+            all_worker_lines.append(m_worker_lines)
+        else:
+            all_worker_lines.append(x_worker_lines)
+    zipped = zip(*all_worker_lines)
+    for z in zipped:
+        logger.info("  ".join(z))
+
+
 import pickle
 
 import torch
@@ -297,3 +317,27 @@ def get_batches_from_generator(iterable, n):
     while x:
         yield x
         x = tuple(itertools.islice(it, n))
+
+
+def calc_chunksize(num_dicts, min_chunksize=4, max_chunksize=512, max_processes=10):
+    if mp.cpu_count() > 3:
+        num_cpus = min(mp.cpu_count() - 1 or 1, max_processes)  # -1 to keep a CPU core free for xxx
+    else:
+        num_cpus = min(mp.cpu_count(), max_processes)  # when there are few cores, we use all of them
+
+    dicts_per_cpu = np.ceil(num_dicts / num_cpus)
+    # automatic adjustment of multiprocessing chunksize
+    # for small files (containing few dicts) we want small chunksize to ulitize all available cores but never less
+    # than 2, because we need it to sample another random sentence in LM finetuning
+    # for large files we want to minimize processor spawning without giving too much data to one process, so we
+    # clip it at 5k
+    multiprocessing_chunk_size = int(np.clip((np.ceil(dicts_per_cpu / 5)), a_min=min_chunksize, a_max=max_chunksize))
+    # This lets us avoid cases in lm_finetuning where a chunk only has a single doc and hence cannot pick
+    # a valid next sentence substitute from another document
+    if num_dicts != 1:
+        while num_dicts % multiprocessing_chunk_size == 1:
+            multiprocessing_chunk_size -= -1
+    dict_batches_to_process = int(num_dicts / multiprocessing_chunk_size)
+    num_processes = min(num_cpus, dict_batches_to_process) or 1
+
+    return multiprocessing_chunk_size, num_processes

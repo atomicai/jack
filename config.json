@@ -1,0 +1,16 @@
+{
+    "training": {
+        "data_dir": "~/Dataset/training",
+        "model_path": "~/Weights/mbert-cased",
+        "batch_size": 4,
+        "epochs": 5,
+        "loss": "focal",
+        "save_dir": "~/Weights/tuned/mbert-cased_focal"
+    },
+    "logging": {
+        "project_name": "RC",
+        "pipe": "file",
+        "experiment_name": "training_on_keyword"
+    },
+    "evaluating": {}
+}

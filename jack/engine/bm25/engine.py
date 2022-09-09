@@ -3,10 +3,9 @@ import logging
 import string
 from typing import Dict, List, Optional, Union
 
-from more_itertools import chunked
-
 from jack.engine import engine
 from jack.storing import doc, elastic
+from more_itertools import chunked
 
 logger = logging.getLogger(__name__)
 
